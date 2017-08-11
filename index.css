@@ -1,4 +1,20 @@
+
+* { margin:0; padding:0; } /* to remove the top and left whitespace */
+
+html, body { width:100%; height:100%; } /* just to be sure these are full screen*/
+
+canvas { display:block; } /* To remove the scrollbars */
+
 .map-layer {
 	display: inline-block;
 	margin: auto;
+}
+
+
+.tooltip {
+	padding: 5px;
+	background-color: rgba(250,250,250,0.7);
+	border-radius: 3px;
+	border-width: 3px;
+	border-color: rgba(255,255,255,0.9); 
 }
