@@ -1,7 +1,8 @@
 
 
-const width = 1000;
-const height = 600;
+const width = 961;
+const height = 450;
+const marginTip = 100;
 let active = d3.select(null);
 
 
@@ -13,6 +14,7 @@ const zoom = d3.zoom().on("zoom", zoomed)
 	
 var tip = d3.tip()
   .attr('class', 'd3-tip')
+  .direction( 'se' )
   .offset([-10, 0])
   .html(function(d) {
 	return `
@@ -28,17 +30,16 @@ var tip = d3.tip()
   });
 
 const svg = d3.select("#svg")
-			.attr("width", "100%" ) 
-			.attr("height", "100%")
-			.attr("viewBox", `0 0 961 922`)
+			.attr("width", "100%" )
+			.attr("viewBox", `0 0 ${width} ${height}`)
 			//.attr("viewBox", `0 0 ${window.innerWidth/2} ${window.innerHeight/2}`)
 			.call( zoom );
 
-svg.append("rect")
+/* svg.append("rect")
     .attr("class", "background")
     .attr("width", "100%")
     .attr("height", "100%")
-    .on("click", reset);
+    .on("click", reset); */
 
 const mapLayer = svg.append("g")
 				.classed('map-layer', true);
@@ -46,6 +47,22 @@ const mapLayer = svg.append("g")
 
 
 svg.call(tip);
+
+svg.on("mousemove", function() {
+	var coordinates = d3.mouse(this);
+	var x = coordinates[0];
+	var y = coordinates[1];
+	var xDirection = 'e';
+	var yDirection = 's';
+	if ( x > width - marginTip ) {
+		xDirection = 'w';
+	}
+	if ( y > height - marginTip ) {
+		yDirection = 'n';
+	}
+	console.log( yDirection + xDirection );
+	tip.direction( yDirection + xDirection );
+})
 
 
 
@@ -55,6 +72,8 @@ var path = d3.geoPath(projection);
 
 function drawStuff() {
 	d3.json('./countries.json', function(error, mapData) {
+		if (error) throw new Error(error);
+
 		var features = mapData.features;
 
 
@@ -69,6 +88,7 @@ function drawStuff() {
 	});
 
 	d3.json('./meteor-strike-data.json', function(error, mapData) {
+		if (error) throw new Error(error);
 		var features = mapData.features;
 
 		const range = 180000;
@@ -103,27 +123,6 @@ function drawStuff() {
 
 
 
-window.addEventListener('resize', resizeSVG, false);
-
-
-
-function resizeSVG() {
-		console.log("resized");
-		/*
-		svg.attr("width", "100%" ) 
-			.attr("height", "100%")
-			//.attr("viewBox", "0 0 1000 600")
-			.attr("viewBox", `0 0 ${window.innerWidth/2} ${window.innerHeight/2}`);
-*/
-/*
-	  	mapLayer.attr("x", 0)
-	  	.attr("width", window.innerWidth ) 
-		.attr("height", window.innerHeight );
-*/
-
-        drawStuff(); 
-}
-
 function zoomed() {
 	svg.attr("transform", d3.event.transform);
 }
@@ -138,4 +137,4 @@ function reset() {
       .call( zoom.transform, d3.zoomIdentity ); // updated for d3 v4
 }
 
-resizeSVG();
+drawStuff();
