@@ -6,11 +6,7 @@ const marginTip = 100;
 let active = d3.select(null);
 
 
-const zoom = d3.zoom().on("zoom", zoomed)
-				//.scaleExtent([1,8]);
-				//.translateExtent([ 0, 0], [window.innerWidth/2, window.innerHeight/2])
-
-
+const zoom = d3.zoom().on("zoom", zoomed);
 	
 var tip = d3.tip()
   .attr('class', 'd3-tip')
@@ -31,15 +27,9 @@ var tip = d3.tip()
 
 const svg = d3.select("#svg")
 			.attr("width", "100%" )
-			.attr("viewBox", `0 0 ${width} ${height}`)
-			//.attr("viewBox", `0 0 ${window.innerWidth/2} ${window.innerHeight/2}`)
-			.call( zoom );
+			.attr("viewBox", `0 0 ${width} ${height}`);
+			
 
-/* svg.append("rect")
-    .attr("class", "background")
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .on("click", reset); */
 
 const mapLayer = svg.append("g")
 				.classed('map-layer', true);
@@ -47,6 +37,8 @@ const mapLayer = svg.append("g")
 
 
 svg.call(tip);
+
+svg.call( zoom );
 
 svg.on("mousemove", function() {
 	var coordinates = d3.mouse(this);
@@ -60,8 +52,12 @@ svg.on("mousemove", function() {
 	if ( y > height - marginTip ) {
 		yDirection = 'n';
 	}
-	console.log( yDirection + xDirection );
 	tip.direction( yDirection + xDirection );
+});
+
+d3.select("body")
+.on("click", function() {
+	console.log(d3.mouse(this));
 })
 
 
@@ -124,7 +120,15 @@ function drawStuff() {
 
 
 function zoomed() {
-	svg.attr("transform", d3.event.transform);
+	const transform = d3.event.transform;
+	
+	//console.log(transform);
+	/* transform.x = transform.x < 0 ? (-1)*transform.x : transform.x;
+	transform.y = transform.y < 0 ? (-1)*transform.y : transform.y;
+	console.log(transform); */
+	transform.x /=2 ;
+	transform.y /=2 ;
+	svg.attr("transform", transform );
 }
 
 function reset() {
