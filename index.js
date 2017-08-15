@@ -2,11 +2,13 @@
 
 const width = 961;
 const height = 450;
-const marginTip = 100;
+const marginTip = 150;
 let active = d3.select(null);
 
 
-const zoom = d3.zoom().on("zoom", zoomed);
+const zoom = d3.zoom()
+			.scaleExtent([1,10])
+			.on("zoom", zoomed);
 	
 var tip = d3.tip()
   .attr('class', 'd3-tip')
@@ -29,7 +31,12 @@ const svg = d3.select("#svg")
 			.attr("width", "100%" )
 			.attr("viewBox", `0 0 ${width} ${height}`);
 			
-
+const background = 	svg.append("rect")
+					.attr("fill", "white")
+					.attr("x", "-100")
+					.attr("y", "-100")
+					.attr("width", width)
+					.attr("height", height);
 
 const mapLayer = svg.append("g")
 				.classed('map-layer', true);
@@ -37,7 +44,6 @@ const mapLayer = svg.append("g")
 
 
 svg.call(tip);
-
 svg.call( zoom );
 
 svg.on("mousemove", function() {
@@ -99,7 +105,6 @@ function drawStuff() {
 
 		var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
 
-
 	  	mapLayer.selectAll('path')
 				.data(features)
 				.enter().append('path')
@@ -121,14 +126,13 @@ function drawStuff() {
 
 function zoomed() {
 	const transform = d3.event.transform;
-	
-	//console.log(transform);
-	/* transform.x = transform.x < 0 ? (-1)*transform.x : transform.x;
-	transform.y = transform.y < 0 ? (-1)*transform.y : transform.y;
-	console.log(transform); */
-	transform.x /=2 ;
-	transform.y /=2 ;
-	svg.attr("transform", transform );
+	var coordinates = d3.mouse(this);
+	var x = coordinates[0];
+	var y = coordinates[1];
+	console.log(transform);
+	svg.attr("transform", "translate(" + transform.x + "," + transform.y + ") scale(" + transform.k + ")");
+	//svg.attr("transform", "translate(" + 0 + "," + 0 + ") scale(" + transform.k + ")");
+	//svg.attr("transform", transform );
 }
 
 function reset() {
