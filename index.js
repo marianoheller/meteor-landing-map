@@ -73,6 +73,41 @@ var path = d3.geoPath(projection);
 
 
 function drawStuff() {
+
+	const drawMeteors = function drawMeteors() {
+		d3.json('./meteor-strike-data.json', function(error, mapData) {
+			if (error) throw new Error(error);
+			var features = mapData.features;
+
+			const range = 180000;
+			const radiusScale = d3.scaleThreshold()
+							.domain([ 
+								range*2,
+								range*3,
+								range*20,
+								range*100,
+							])
+							.range([ 2, 3, 9, 21, 40]);
+
+			var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
+
+			mapLayer.selectAll('path')
+					.data(features)
+					.enter().append('path')
+					.attr('d', function(feature) {
+						path.pointRadius( radiusScale(feature.properties.mass) );
+						return path(feature);
+					} )
+					.attr('vector-effect', 'non-scaling-stroke')
+					.style('fill', function(d) {
+						return colorScale(d.properties.name)
+					})
+					.style("opacity", 0.75)
+					.on('mouseover', tip.show)
+					.on('mouseout', tip.hide);
+		});
+	}
+
 	d3.json('./countries.json', function(error, mapData) {
 		if (error) throw new Error(error);
 
@@ -87,38 +122,7 @@ function drawStuff() {
 				.style('stroke', "#FFF")
 				.attr('vector-effect', 'non-scaling-stroke');
 
-	});
-
-	d3.json('./meteor-strike-data.json', function(error, mapData) {
-		if (error) throw new Error(error);
-		var features = mapData.features;
-
-		const range = 180000;
-		const radiusScale = d3.scaleThreshold()
-						.domain([ 
-							range*2,
-							range*3,
-							range*20,
-							range*100,
-						])
-						.range([ 2, 3, 9, 21, 40]);
-
-		var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
-
-	  	mapLayer.selectAll('path')
-				.data(features)
-				.enter().append('path')
-				.attr('d', function(feature) {
-					path.pointRadius( radiusScale(feature.properties.mass) );
-					return path(feature);
-				} )
-				.attr('vector-effect', 'non-scaling-stroke')
-				.style('fill', function(d) {
-					return colorScale(d.properties.name)
-				})
-				.style("opacity", 0.75)
-				.on('mouseover', tip.show)
-	      		.on('mouseout', tip.hide);
+		drawMeteors();
 	});
 }
 
