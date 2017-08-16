@@ -63,7 +63,7 @@ svg.on("mousemove", function() {
 
 d3.select("body")
 .on("click", function() {
-	console.log(d3.mouse(this));
+	//console.log(d3.mouse(this));
 })
 
 
@@ -133,7 +133,7 @@ function zoomed() {
 	var coordinates = d3.mouse(this);
 	var x = coordinates[0];
 	var y = coordinates[1];
-	console.log(transform);
+	//console.log(transform);
 	svg.attr("transform", "translate(" + transform.x + "," + transform.y + ") scale(" + transform.k + ")");
 	//svg.attr("transform", "translate(" + 0 + "," + 0 + ") scale(" + transform.k + ")");
 	//svg.attr("transform", transform );
